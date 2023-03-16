@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from authorization.views import IndexView, login_view, register_view, profile_view, logout_view, order_view
+from recipes.views import show_recipe_card1, show_recipe_card2, show_recipe_card3
 
 urlpatterns = [
     path('', IndexView.as_view(), name='home_page'),
@@ -24,5 +25,7 @@ urlpatterns = [
     path('logout', logout_view, name='logout'),
     path('register', register_view, name='register'),
     path('profile', profile_view, name='profile'),
-    path('order', order_view, name='order')
-]
+    path('order', order_view, name='order'),
+    path('card1/<int:recipe_id>', show_recipe_card1, name='show_recipe_card1'),
+    path('card2/<int:recipe_id>', show_recipe_card2, name='show_recipe_card2'),
+    path('card3/<int:recipe_id>', show_recipe_card3, name='show_recipe_card3'),

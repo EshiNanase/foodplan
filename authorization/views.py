@@ -2,7 +2,7 @@ import datetime
 import textwrap
 
 from django.views.generic import TemplateView
-from authorization.forms import LoginUserForm, RegisterUserForm, ProfileUserForm, OrderForm
+from authorization.forms import ProfileUserForm, OrderForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -12,10 +12,17 @@ from authorization.decorators import tariff_not_required
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from authorization.utils import check_true_false
+from authorization.forms import RegisterUserForm, LoginUserForm
+from recipes.models import Recipe
 
 
 class IndexView(TemplateView):
     template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['recipes'] = Recipe.objects.all()
+        return context
 
 
 def register_view(request):

@@ -20,3 +20,4 @@ class CustomUserAdmin(admin.ModelAdmin):
 
     class Meta:
         model = CustomUser
+
