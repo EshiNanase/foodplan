@@ -16,10 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from authorization.views import IndexView, LoginView, RegistrationView
+from recipes.views import show_recipe_card1, show_recipe_card2, show_recipe_card3
 
 urlpatterns = [
     path('', IndexView.as_view(), name='home_page'),
     path('admin/', admin.site.urls),
     path('login', LoginView.as_view(), name='login'),
     path('register', RegistrationView.as_view(), name='register'),
+    path('card1/<int:recipe_id>', show_recipe_card1, name='show_recipe_card1'),
+    path('card2/<int:recipe_id>', show_recipe_card2, name='show_recipe_card2'),
+    path('card3/<int:recipe_id>', show_recipe_card3, name='show_recipe_card3'),
 ]
