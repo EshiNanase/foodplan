@@ -2,10 +2,16 @@ from django.views.generic import TemplateView
 from authorization.forms import RegisterUserForm, LoginUserForm
 from django.views.generic.edit import FormView
 from django.shortcuts import reverse
+from recipes.models import Recipe
 
 
 class IndexView(TemplateView):
     template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['recipes'] = Recipe.objects.all()
+        return context
 
 
 class LoginView(FormView):
