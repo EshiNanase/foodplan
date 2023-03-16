@@ -44,32 +44,35 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    BY_PIECE = 'P'
-    IN_GRAMS = 'G'
+    BY_PIECE = 'PS'
+    GRAMS = 'GR'
+    MILLILITRES = 'ML'
+    TO_TASTE = 'TT'
 
     INGREDIENT_CHOICE = (
-        (BY_PIECE, 'штук'),
-        (IN_GRAMS, 'граммов')
+        (BY_PIECE, 'шт.'),
+        (GRAMS, 'гр.'),
+        (MILLILITRES, 'мл'),
+        (TO_TASTE, 'по вкусу')
     )
 
     ingredient = models.ForeignKey(
         Ingredient,
         verbose_name='ингредиент',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     recipe = models.ForeignKey(
         Recipe,
         verbose_name='Рецепт',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='ingredients'
     )
-    quantity = models.DecimalField(
+    quantity = models.IntegerField(
         'Количество',
-        max_digits=6,
-        decimal_places=2
     )
     unit = models.CharField(
         'Единица измерения',
-        max_length=1,
+        max_length=2,
         choices=INGREDIENT_CHOICE
     )
 
