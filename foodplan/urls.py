@@ -18,8 +18,8 @@ from django.urls import path
 from authorization.views import IndexView, LoginView, RegistrationView
 
 urlpatterns = [
+    path('', IndexView.as_view(), name='home_page'),
     path('admin/', admin.site.urls),
-    path('', IndexView.as_view()),
-    path('login', LoginView.as_view()),
-    path('registration', RegistrationView.as_view()),
+    path('login', LoginView.as_view(), name='login'),
+    path('register', RegistrationView.as_view(), name='register'),
 ]
