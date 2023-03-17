@@ -31,7 +31,11 @@
                                     <button id="tab1" class="btn shadow-none foodplan__tab-button active" data-bs-toggle="tab" data-bs-target="#data">Персональные данные</button>
                                 </li>
                                 <li class="nav-item foodplan__tab-item">
-                                    <button id="tab2" class="btn shadow-none foodplan__tab-button" data-bs-toggle="tab" data-bs-target="#menu">Моё меню</button>
+                                    {% if user.tariff_is_active %}
+                                        <button id="tab2" class="btn shadow-none foodplan__tab-button" data-bs-toggle="tab" data-bs-target="#menu">Моё меню</button>
+                                    {% else %}
+                                        <a class="btn shadow-none foodplan__tab-button" href="{% url 'order' %}" >Моё меню</a>
+                                    {% endif %}
                                 </li>
                                 <li class="nav-item foodplan__tab-item flex-grow-1"></li>
                             </ul>
