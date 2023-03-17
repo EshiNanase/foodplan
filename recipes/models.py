@@ -24,17 +24,30 @@ class Recipe(models.Model):
         (KETO, 'Кето')
     )
 
+    MEAL_TIME_CHOICES = (
+        ('breakfast', 'Завтрак'),
+        ('lunch', 'Обед'),
+        ('dinner', 'Ужин'),
+        ('desert', 'Десерт'),
+    )
+
     name = models.CharField('Название рецепта', max_length=255)
     menu_type = models.CharField(
         'Тип меню',
         max_length=2,
         choices=MENU_TYPE_CHOICES
     )
+    meal_time = models.CharField(
+        'Временной промежуток',
+        max_length=9,
+        choices=MEAL_TIME_CHOICES,
+        default='lunch'
+    )
+
     image = models.ImageField('Фото рецепта', upload_to='static/img')
     short_description = models.CharField('Краткое описание', max_length=255)
     instruction = models.TextField('Способ приготовления')
     calories = models.IntegerField('Калорийность')
-
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'

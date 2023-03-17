@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Recipe
+from authorization.models import Tariff
 
 
 def get_recipe_details(recipe):
@@ -11,25 +12,30 @@ def get_recipe_details(recipe):
         'unit': item.get_unit_display()
     } for item in recipe_items]
 
-    recipe_details = {
+
+    return {'recipe_details':{
         'name': recipe.name,
         'ingredients': ingredients,
         'calories': recipe.calories,
         'description': recipe.short_description,
         'instruction': recipe.instruction
+    }}
+
+
+def show_tariff_card(request):
+    user = request.user
+    tariff = Tariff.objects.get(user=user)
+    meal_times = {
+        'breakfast': tariff.breakfast,
+        'lunch': tariff.lunch,
+        'dinner': tariff.dinner,
+        'desert': tariff.desert
     }
-    return {'recipe_details': recipe_details}
 
+    meal_times_filtered = [key for key, value in meal_times.items() if value]
 
-def show_recipe_card1(request, recipe_id):
-    recipe = get_object_or_404(Recipe, pk=recipe_id)
-    return render(request, 'card1.html', context=get_recipe_details(recipe))
-
-
-def show_recipe_card2(request, recipe_id):
-    recipe = get_object_or_404(Recipe, pk=recipe_id)
-    return render(request, 'card2.html', context=get_recipe_details(recipe))
-
-def show_recipe_card3(request, recipe_id):
-    recipe = get_object_or_404(Recipe, pk=recipe_id)
-    return render(request, 'card3.html', context=get_recipe_details(recipe))
+    filter_args = {
+        "meal_time__in": meal_times_filtered
+    }
+    recipes = [get_recipe_details(recipe) for recipe in Recipe.objects.filter(**filter_args)]
+    return render(request, 'card3.html', context={'recipes': recipes})
