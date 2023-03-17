@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from authorization.views import IndexView, login_view, register_view, profile_view, logout_view, order_view
-from recipes.views import show_recipe_card1, show_recipe_card2, show_recipe_card3
+from recipes.views import show_tariff_card
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -28,9 +28,7 @@ urlpatterns = [
     path('register', register_view, name='register'),
     path('profile', profile_view, name='profile'),
     path('order', order_view, name='order'),
-    path('card1/<int:recipe_id>', show_recipe_card1, name='show_recipe_card1'),
-    path('card2/<int:recipe_id>', show_recipe_card2, name='show_recipe_card2'),
-    path('card3/<int:recipe_id>', show_recipe_card3, name='show_recipe_card3'),
+    path('tariff_card', show_tariff_card, name='tariff_card'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
