@@ -17,10 +17,19 @@
                 <a class="navbar-brand" href="https://dvmn.org/">
                     <img src="../static/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
                 </a>
-                <a class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green" href="{% url 'login' %}">
-                    Войти
-                </a>
-                </button>
+                {% if user.is_authenticated %}
+                        <li class="nav-item align-items-center d-md-flex flex-grow-1 justify-content-end">
+                            {% if not user.tariff_is_active %}
+                                <a class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" href="{% url 'order' %}">Оплатить</a>
+                            {% endif %}
+                            <a class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" href="{% url 'profile' %}">Профиль</a>
+                            <a class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" href="{% url 'logout' %}">Выйти</a>
+                        </li>
+                {% else %}
+                    <a class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green" href="{% url 'login' %}">
+                        Войти
+                    </a>
+                {% endif %}
             </div>
         </nav>
     </header>
