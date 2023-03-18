@@ -3,7 +3,31 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from django.utils import timezone
+
+
+class PromoCode(models.Model):
+    promo_code = models.CharField(
+        unique=True,
+        max_length=255,
+        verbose_name='Промокод'
+    )
+    discount = models.PositiveIntegerField(
+        verbose_name='Размер скидки'
+    )
+    lasts_till = models.DateField(
+        verbose_name='Действителен до'
+    )
+    used = models.BooleanField(
+        default=False,
+        verbose_name='Использован ли'
+    )
+
+    class Meta:
+        verbose_name = 'Промокод'
+        verbose_name_plural = 'Промокоды'
+
+    def __str__(self):
+        return f'{self.lasts_till}'
 
 
 class CustomUserManager(BaseUserManager):
@@ -76,42 +100,77 @@ class Tariff(models.Model):
         related_name='tariff'
     )
     name = models.CharField(
+        blank=True,
         max_length=255,
         choices=choices,
         verbose_name='Название'
     )
     breakfast = models.BooleanField(
+        null=True,
+        blank=True,
         verbose_name='Включены завтраки'
     )
     lunch = models.BooleanField(
+        null=True,
+        blank=True,
         verbose_name='Включены обеды'
     )
     dinner = models.BooleanField(
+        null=True,
+        blank=True,
         verbose_name='Включены ужины'
     )
     desert = models.BooleanField(
+        null=True,
+        blank=True,
         verbose_name='Включены десерты'
     )
     persons = models.PositiveIntegerField(
+        null=True,
+        blank=True,
         verbose_name='Количество персон'
     )
     fish_allergy = models.BooleanField(
+        null=True,
+        blank=True,
         verbose_name='Рыба и морепродукты'
     )
     meat_allergy = models.BooleanField(
+        null=True,
+        blank=True,
         verbose_name='Мясо'
     )
     seed_allergy = models.BooleanField(
+        null=True,
+        blank=True,
         verbose_name='Зерновые'
     )
     bee_allergy = models.BooleanField(
-        verbose_name='Продукты пчеловодства '
+        null=True,
+        blank=True,
+        verbose_name='Продукты пчеловодства'
     )
     nut_allergy = models.BooleanField(
+        null=True,
+        blank=True,
         verbose_name='Орехи и бобовые'
     )
     lactose_allergy = models.BooleanField(
+        null=True,
+        blank=True,
         verbose_name='Молочные продукты '
+    )
+    price = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name='Стоимость'
+    )
+    promo_code = models.ForeignKey(
+        blank=True,
+        null=True,
+        to=PromoCode,
+        on_delete=models.SET_NULL,
+        verbose_name='Промокод'
     )
 
     class Meta:

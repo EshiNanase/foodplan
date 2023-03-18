@@ -1,19 +1,21 @@
 import datetime
 import textwrap
 
+from django.db import transaction
 from django.views.generic import TemplateView
 from authorization.forms import ProfileUserForm, OrderForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from authorization.models import CustomUser, Tariff
+from authorization.models import CustomUser, Tariff, PromoCode
 from authorization.decorators import tariff_not_required
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from authorization.utils import check_true_false
 from authorization.forms import RegisterUserForm, LoginUserForm
 from recipes.models import Recipe
+from authorization.stripe import create_checkout_session
 
 
 class IndexView(TemplateView):
@@ -140,6 +142,7 @@ def logout_view(request):
     return redirect('home_page')
 
 
+@transaction.atomic
 @login_required
 @tariff_not_required
 def order_view(request):
@@ -149,18 +152,22 @@ def order_view(request):
     if request.method == 'POST':
 
         user = request.user
+        tariff, created = Tariff.objects.update_or_create(
+            user=user,
+        )
 
         if not request.POST.get('name'):
             messages.error(request, 'Не забудьте выбрать меню!')
-            return render(request, 'order.html', {'form': form})
+            form = OrderForm(request.POST)
+            return render(request, 'order.html', {'form': form, 'price': tariff.price})
 
         defaults = {
             'name': request.POST.get('name'),
-            'breakfast': check_true_false(request.POST.get('breakfast')),
-            'lunch': check_true_false(request.POST.get('lunch')),
-            'dinner': check_true_false(request.POST.get('dinner')),
-            'desert': check_true_false(request.POST.get('desert')),
-            'persons': int(request.POST.get('persons')),
+            'breakfast': check_true_false(request.POST.get('breakfast_choice')),
+            'lunch': check_true_false(request.POST.get('lunch_choice')),
+            'dinner': check_true_false(request.POST.get('dinner_choice')),
+            'desert': check_true_false(request.POST.get('desert_choice')),
+            'persons': int(request.POST.get('persons_choice')),
             'fish_allergy': check_true_false(request.POST.get('fish_allergy')),
             'meat_allergy': check_true_false(request.POST.get('meat_allergy')),
             'seed_allergy': check_true_false(request.POST.get('seed_allergy')),
@@ -169,12 +176,53 @@ def order_view(request):
             'lactose_allergy': check_true_false(request.POST.get('lactose_allergy')),
         }
 
-        tariff, created = Tariff.objects.update_or_create(
-            user=user,
-            defaults=defaults
-        )
-        user.tariff_ends_at = datetime.today() + relativedelta(months=int(request.POST.get('time')))
-        user.save()
-        return redirect('profile')
+        price = 0
+        if defaults['breakfast']:
+            price += 100
+        if defaults['lunch']:
+            price += 100
+        if defaults['dinner']:
+            price += 100
+        if defaults['desert']:
+            price += 100
+        price = price * int(request.POST.get('time'))
+        if tariff.promo_code:
+            price = price - tariff.promo_code.discount
+        defaults['price'] = price
+        tariff.price = price
+        tariff.save()
 
-    return render(request, 'order.html', {'form': form})
+        if 'order' in request.POST:
+
+            tariff, created = Tariff.objects.update_or_create(
+                user=user,
+                defaults=defaults
+            )
+            return create_checkout_session(user, tariff.price, int(request.POST.get('time')))
+
+        else:
+
+            form = OrderForm(request.POST)
+
+            tariff, created = Tariff.objects.update_or_create(
+                user=user,
+            )
+
+            if 'promo_code_submit' in request.POST:
+                promo_code = PromoCode.objects.filter(promo_code=request.POST.get('promo_code')).first()
+                if tariff.promo_code:
+                    messages.success(request, 'У вас уже есть примененный промокод!')
+                elif promo_code and promo_code.lasts_till >= datetime.today().date():
+                    tariff.price -= promo_code.discount
+                    tariff.promo_code = promo_code
+                    tariff.save()
+
+                    promo_code.used = True
+                    promo_code.save()
+                else:
+                    messages.success(request, 'Недействительный промокод')
+
+            return render(request, 'order.html', {'form': form, 'price': tariff.price})
+
+    price = 0
+    return render(request, 'order.html', {'form': form, 'price': price})

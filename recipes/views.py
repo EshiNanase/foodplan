@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Recipe
 from authorization.models import Tariff
+from authorization.decorators import tariff_required
+from django.contrib.auth.decorators import login_required
 
 
 def get_recipe_details(recipe):
@@ -12,7 +14,6 @@ def get_recipe_details(recipe):
         'unit': item.get_unit_display()
     } for item in recipe_items]
 
-
     return {'recipe_details':{
         'name': recipe.name,
         'ingredients': ingredients,
@@ -22,6 +23,8 @@ def get_recipe_details(recipe):
     }}
 
 
+@login_required
+@tariff_required
 def show_tariff_card(request):
     user = request.user
     tariff = Tariff.objects.get(user=user)

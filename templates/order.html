@@ -17,7 +17,11 @@
                 <a class="navbar-brand" href="#">
                     <img src="../static/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
                 </a>
-                <h3 class="text-secondary mt-2 me-2">Стоимость: 00000₽</h3>
+                {% if price == 0 %}
+                    <h3 class="text-secondary mt-2 me-2"></h3>
+                {% else %}
+                    <h3 class="text-secondary mt-2 me-2">Стоимость: {{ price }} руб.</h3>
+                {% endif %}
                 <a class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" href="{% url 'logout' %}">Выйти</a>
             </div>
         </nav>
@@ -76,61 +80,37 @@
                         <tr>
                             <th scope="row" class="text-start">Срок</th>
                             <td>
-                                <select name="time" class="form-select">
-                                    {% for value, choice in form.fields.time.choices %}
-                                    <option value="{{ value }}" selected>{{ choice }}</option>
-                                    {% endfor %}
-                                </select>
+                                {{ form.time }}
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Завтраки</th>
                             <td>
-                                <select name="breakfast" class="form-select">
-                                    {% for value, choice in form.fields.breakfast_choice.choices %}
-                                    <option value="{{ value }}" selected>{{ choice }}</option>
-                                    {% endfor %}
-                                </select>
+                                {{ form.breakfast_choice }}
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Обеды</th>
                             <td>
-                                <select name="lunch" class="form-select">
-                                    {% for value, choice in form.fields.lunch_choice.choices %}
-                                    <option value="{{ value }}" selected>{{ choice }}</option>
-                                    {% endfor %}
-                                </select>
+                                {{ form.lunch_choice }}
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Ужины</th>
                             <td>
-                                <select name="dinner" class="form-select">
-                                    {% for value, choice in form.fields.dinner_choice.choices %}
-                                    <option value="{{ value }}" selected>{{ choice }}</option>
-                                    {% endfor %}
-                                </select>
+                                {{ form.dinner_choice }}
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Десерты</th>
                             <td>
-                                <select name="desert" class="form-select">
-                                    {% for value, choice in form.fields.desert_choice.choices %}
-                                    <option value="{{ value }}" selected>{{ choice }}</option>
-                                    {% endfor %}
-                                </select>
+                                {{ form.desert_choice }}
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Кол-во персон</th>
                             <td>
-                                <select name="persons" class="form-select">
-                                    {% for value, choice in form.fields.persons_choice.choices %}
-                                    <option value="{{ value }}" selected>{{ choice }}</option>
-                                    {% endfor %}
-                                </select>
+                                {{ form.persons_choice }}
                             </td>
                         </tr>
                         <tr>
@@ -177,15 +157,16 @@
                     </tbody>
                 </table>
                 <button type="submit" id="TableSubmit" class="d-none"></button>
-                </form>
-
-                <form class="card d-flex flex-row align-items-baseline mb-5 p-3 foodplan__bg_grey">
-                    <label for="exampleInputPassword1" class="form-label me-2">Промокод</label>
-                    <input type="password" class="form-control me-2" id="password">
-                    <button type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green">Применить</button>
+                    <div class="card d-flex flex-row align-items-baseline mb-5 p-3 foodplan__bg_grey">
+                    <label class="form-label me-2">Промокод</label>
+<!--                    <input name="promo_code" type="password" class="form-control me-2" id="password">-->
+                    {{ form.promo_code }}
+                    <button name="promo_code_submit" form="order" type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green">Применить</button>
+                </div>
                 </form>
                 <div class="d-flex justify-content-center my-5">
-                    <button form="order" type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green w-50">Оплатить</button>
+                    <button name="count_price" form="order" type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green w-50">Рассчитать</button>
+                    <button name="order" form="order" type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green w-50">Оплатить</button>
                 </div>
             </div>
         </section>

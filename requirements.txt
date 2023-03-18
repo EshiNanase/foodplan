@@ -3,3 +3,4 @@ environs==9.5.0
 django-registration==3.3
 python-dateutil==2.8.2
 Pillow==9.4.0
+stripe==5.2.0

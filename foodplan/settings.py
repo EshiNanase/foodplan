@@ -141,3 +141,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "authorization.CustomUser"
 LOGIN_URL = 'login'
+
+STRIPE_PUBLIC_KEY = env.str('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = env.str('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = env.str('STRIPE_WEBHOOK_SECRET')
+TARIFF_API_ID = env.str('TARIFF_API_ID')
