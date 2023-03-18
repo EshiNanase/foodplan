@@ -1,5 +1,5 @@
 from django.contrib import admin
-from authorization.models import CustomUser, Tariff, PromoCode
+from authorization.models import CustomUser, Tariff, Allergen, PromoCode
 
 
 @admin.register(Tariff)
@@ -27,3 +27,10 @@ class PromoCodeAdmin(admin.ModelAdmin):
 
     class Meta:
         model = PromoCode
+
+
+@admin.register(Allergen)
+class AllergenAdmin(admin.ModelAdmin):
+
+    class Meta:
+        model = Allergen

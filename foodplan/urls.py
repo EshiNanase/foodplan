@@ -19,7 +19,7 @@ from authorization.views import IndexView, login_view, register_view, profile_vi
 from recipes.views import show_tariff_card
 from django.conf import settings
 from django.conf.urls.static import static
-from authorization.stripe import stripe_webhook_view
+from authorization.payment import stripe_webhook_view
 
 urlpatterns = [
     path('', IndexView.as_view(), name='home_page'),

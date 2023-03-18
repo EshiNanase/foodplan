@@ -29,7 +29,7 @@ def create_checkout_session(user, price, time):
             ],
             mode='payment',
             metadata={'user_id': user.id, 'time': time},
-            success_url='https://www.youtube.com/watch?v=cuX5QQXbLDQ',
+            success_url='http://45.131.40.159/profile',
         )
     except Exception as e:
         print(str(e))

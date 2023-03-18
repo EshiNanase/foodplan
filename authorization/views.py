@@ -8,14 +8,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from authorization.models import CustomUser, Tariff, PromoCode
+from authorization.models import CustomUser, Tariff, PromoCode, Allergen
 from authorization.decorators import tariff_not_required
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from authorization.utils import check_true_false
 from authorization.forms import RegisterUserForm, LoginUserForm
 from recipes.models import Recipe
-from authorization.stripe import create_checkout_session
+from authorization.payment import create_checkout_session
 
 
 class IndexView(TemplateView):
@@ -149,17 +149,12 @@ def order_view(request):
 
     form = OrderForm()
 
+    user = request.user
+    tariff, created = Tariff.objects.get_or_create(
+        user=user
+    )
+
     if request.method == 'POST':
-
-        user = request.user
-        tariff, created = Tariff.objects.update_or_create(
-            user=user,
-        )
-
-        if not request.POST.get('name'):
-            messages.error(request, 'Не забудьте выбрать меню!')
-            form = OrderForm(request.POST)
-            return render(request, 'order.html', {'form': form, 'price': tariff.price})
 
         defaults = {
             'name': request.POST.get('name'),
@@ -175,6 +170,14 @@ def order_view(request):
             'nut_allergy': check_true_false(request.POST.get('nut_allergy')),
             'lactose_allergy': check_true_false(request.POST.get('lactose_allergy')),
         }
+
+        for pair in defaults:
+            if 'allergy' in pair and defaults[pair] is True:
+                tariff.allergens.add(Allergen.objects.get(name=pair))
+            elif 'allergy' in pair and defaults[pair] is False:
+                tariff.allergens.remove(Allergen.objects.get(name=pair))
+        for allergy in Allergen.objects.all():
+            defaults.pop(allergy.name)
 
         price = 0
         if defaults['breakfast']:
@@ -192,21 +195,16 @@ def order_view(request):
         tariff.price = price
         tariff.save()
 
-        if 'order' in request.POST:
+        if not request.POST.get('name'):
+            messages.error(request, 'Не забудьте выбрать меню!')
+            form = OrderForm(request.POST)
+            return render(request, 'order.html', {'form': form, 'tariff': tariff, 'allergies': list(Allergen.objects.all())})
 
-            tariff, created = Tariff.objects.update_or_create(
-                user=user,
-                defaults=defaults
-            )
+        if 'order' in request.POST:
             return create_checkout_session(user, tariff.price, int(request.POST.get('time')))
 
         else:
-
             form = OrderForm(request.POST)
-
-            tariff, created = Tariff.objects.update_or_create(
-                user=user,
-            )
 
             if 'promo_code_submit' in request.POST:
                 promo_code = PromoCode.objects.filter(promo_code=request.POST.get('promo_code')).first()
@@ -222,7 +220,6 @@ def order_view(request):
                 else:
                     messages.success(request, 'Недействительный промокод')
 
-            return render(request, 'order.html', {'form': form, 'price': tariff.price})
+            return render(request, 'order.html', {'form': form, 'tariff': tariff, 'allergies': list(Allergen.objects.all())})
 
-    price = 0
-    return render(request, 'order.html', {'form': form, 'price': price})
+    return render(request, 'order.html', {'form': form, 'tariff': tariff, 'allergies': list(Allergen.objects.all())})
