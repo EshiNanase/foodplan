@@ -154,6 +154,13 @@ def order_view(request):
             messages.error(request, 'Не забудьте выбрать меню!')
             return render(request, 'order.html', {'form': form})
 
+        allergens = []
+        for field_name in ['fish_allergy', 'meat_allergy', 'seed_allergy', 'bee_allergy', 'nut_allergy',
+                           'lactose_allergy']:
+            if request.POST.get(field_name):
+                allergen, created = Allergen.objects.get_or_create(name=field_name)
+                allergens.append(allergen)
+
         defaults = {
             'name': request.POST.get('name'),
             'breakfast': check_true_false(request.POST.get('breakfast')),
@@ -161,18 +168,14 @@ def order_view(request):
             'dinner': check_true_false(request.POST.get('dinner')),
             'desert': check_true_false(request.POST.get('desert')),
             'persons': int(request.POST.get('persons')),
-            'fish_allergy': check_true_false(request.POST.get('fish_allergy')),
-            'meat_allergy': check_true_false(request.POST.get('meat_allergy')),
-            'seed_allergy': check_true_false(request.POST.get('seed_allergy')),
-            'bee_allergy': check_true_false(request.POST.get('bee_allergy')),
-            'nut_allergy': check_true_false(request.POST.get('nut_allergy')),
-            'lactose_allergy': check_true_false(request.POST.get('lactose_allergy')),
+            'allergens': allergens,
         }
 
-        tariff, created = Tariff.objects.update_or_create(
+        tariff, _ = Tariff.objects.update_or_create(
             user=user,
             defaults=defaults
         )
+
         user.tariff_ends_at = datetime.today() + relativedelta(months=int(request.POST.get('time')))
         user.save()
         return redirect('profile')

@@ -95,24 +95,7 @@ class Tariff(models.Model):
     persons = models.PositiveIntegerField(
         verbose_name='Количество персон'
     )
-    fish_allergy = models.BooleanField(
-        verbose_name='Рыба и морепродукты'
-    )
-    meat_allergy = models.BooleanField(
-        verbose_name='Мясо'
-    )
-    seed_allergy = models.BooleanField(
-        verbose_name='Зерновые'
-    )
-    bee_allergy = models.BooleanField(
-        verbose_name='Продукты пчеловодства '
-    )
-    nut_allergy = models.BooleanField(
-        verbose_name='Орехи и бобовые'
-    )
-    lactose_allergy = models.BooleanField(
-        verbose_name='Молочные продукты '
-    )
+    allergens = models.ManyToManyField('Allergen', related_name='tariffs', blank=True)
 
     class Meta:
         verbose_name = 'Тариф'
@@ -120,3 +103,23 @@ class Tariff(models.Model):
 
     def __str__(self):
         return f'Тариф {self.user}'
+
+
+class Allergen(models.Model):
+    ALLERGEN_CHOICES = (
+        ('fish_allergy', 'Рыба и морепродукты'),
+        ('meat_allergy', 'Мясо'),
+        ('seed_allergy', 'Зерновые'),
+        ('bee_allergy', 'Продукты пчеловодства'),
+        ('nut_allergy', 'Орехи и бобовые'),
+        ('lactose_allergy', 'Молочные продукты'),
+    )
+
+    name = models.CharField('Аллергия', max_length=15)
+
+    class Meta:
+        verbose_name = 'Аллергия'
+        verbose_name_plural = 'Аллергии'
+
+    def __str__(self):
+        return self.name
