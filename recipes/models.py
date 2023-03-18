@@ -1,4 +1,5 @@
 from django.db import models
+from authorization.models import Allergen
 
 
 class Ingredient(models.Model):
@@ -48,6 +49,12 @@ class Recipe(models.Model):
     short_description = models.CharField('Краткое описание', max_length=255)
     instruction = models.TextField('Способ приготовления')
     calories = models.IntegerField('Калорийность')
+    allergens = models.ManyToManyField(
+        Allergen,
+        related_name='recipes',
+        blank=True
+    )
+
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'

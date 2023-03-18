@@ -17,10 +17,10 @@
                 <a class="navbar-brand" href="#">
                     <img src="../static/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
                 </a>
-                {% if price == 0 %}
+                {% if tariff.price == 0 %}
                     <h3 class="text-secondary mt-2 me-2"></h3>
                 {% else %}
-                    <h3 class="text-secondary mt-2 me-2">Стоимость: {{ price }} руб.</h3>
+                    <h3 class="text-secondary mt-2 me-2">Стоимость: {{ tariff.price }} руб.</h3>
                 {% endif %}
                 <a class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" href="{% url 'logout' %}">Выйти</a>
             </div>
@@ -116,42 +116,18 @@
                         <tr>
                             <th scope="row" class="text-start">Аллергии</th>
                             <td>
+                                {% for allergy in allergies %}
                                 <div class="form-check d-flex justify-content-start">
-                                    {{ form.fish_allergy }}
+                                    {% if allergy in tariff.allergens.all %}
+                                        <input class="form-check-input me-1 foodplan_checked-green" type="checkbox" name="{{ allergy.name }}" checked>
+                                    {% else %}
+                                        <input class="form-check-input me-1 foodplan_checked-green" type="checkbox" name="{{ allergy.name }}">
+                                    {% endif %}
                                     <label class="form-check-label">
-                                        Рыба и морепродукты
+                                        {{ allergy.get_name_display }}
                                     </label>
                                 </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    {{ form.meat_allergy }}
-                                    <label class="form-check-label">
-                                        Мясо
-                                    </label>
-                                </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    {{ form.seed_allergy }}
-                                    <label class="form-check-label">
-                                        Зерновые
-                                    </label>
-                                </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    {{ form.bee_allergy }}
-                                    <label class="form-check-label">
-                                        Продукты пчеловодства
-                                    </label>
-                                </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    {{ form.nut_allergy }}
-                                    <label class="form-check-label">
-                                        Орехи и бобовые
-                                    </label>
-                                </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    {{ form.lactose_allergy }}
-                                    <label class="form-check-label">
-                                        Молочные продукты
-                                    </label>
-                                </div>
+                                {% endfor %}
                             </td>
                         </tr>
                     </tbody>
@@ -159,7 +135,6 @@
                 <button type="submit" id="TableSubmit" class="d-none"></button>
                     <div class="card d-flex flex-row align-items-baseline mb-5 p-3 foodplan__bg_grey">
                     <label class="form-label me-2">Промокод</label>
-<!--                    <input name="promo_code" type="password" class="form-control me-2" id="password">-->
                     {{ form.promo_code }}
                     <button name="promo_code_submit" form="order" type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green">Применить</button>
                 </div>

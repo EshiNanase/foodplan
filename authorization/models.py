@@ -130,36 +130,6 @@ class Tariff(models.Model):
         blank=True,
         verbose_name='Количество персон'
     )
-    fish_allergy = models.BooleanField(
-        null=True,
-        blank=True,
-        verbose_name='Рыба и морепродукты'
-    )
-    meat_allergy = models.BooleanField(
-        null=True,
-        blank=True,
-        verbose_name='Мясо'
-    )
-    seed_allergy = models.BooleanField(
-        null=True,
-        blank=True,
-        verbose_name='Зерновые'
-    )
-    bee_allergy = models.BooleanField(
-        null=True,
-        blank=True,
-        verbose_name='Продукты пчеловодства'
-    )
-    nut_allergy = models.BooleanField(
-        null=True,
-        blank=True,
-        verbose_name='Орехи и бобовые'
-    )
-    lactose_allergy = models.BooleanField(
-        null=True,
-        blank=True,
-        verbose_name='Молочные продукты '
-    )
     price = models.PositiveIntegerField(
         null=True,
         blank=True,
@@ -172,6 +142,7 @@ class Tariff(models.Model):
         on_delete=models.SET_NULL,
         verbose_name='Промокод'
     )
+    allergens = models.ManyToManyField('Allergen', related_name='tariffs', blank=True)
 
     class Meta:
         verbose_name = 'Тариф'
@@ -179,3 +150,27 @@ class Tariff(models.Model):
 
     def __str__(self):
         return f'Тариф {self.user}'
+
+
+class Allergen(models.Model):
+    ALLERGEN_CHOICES = (
+        ('fish_allergy', 'Рыба и морепродукты'),
+        ('meat_allergy', 'Мясо'),
+        ('seed_allergy', 'Зерновые'),
+        ('bee_allergy', 'Продукты пчеловодства'),
+        ('nut_allergy', 'Орехи и бобовые'),
+        ('lactose_allergy', 'Молочные продукты'),
+    )
+
+    name = models.CharField(
+        'Аллергия',
+        choices=ALLERGEN_CHOICES,
+        max_length=15
+    )
+
+    class Meta:
+        verbose_name = 'Аллергия'
+        verbose_name_plural = 'Аллергии'
+
+    def __str__(self):
+        return self.name

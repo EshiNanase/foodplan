@@ -119,12 +119,4 @@ class OrderForm(forms.ModelForm):
 
     class Meta:
         model = Tariff
-        fields = ['time', 'breakfast_choice', 'lunch_choice', 'dinner_choice', 'desert_choice', 'persons_choice', 'fish_allergy', 'meat_allergy', 'seed_allergy', 'bee_allergy', 'nut_allergy', 'lactose_allergy', 'promo_code']
-        widgets = {
-            'fish_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'meat_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'seed_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'bee_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'nut_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'lactose_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-        }
+        fields = ['time', 'breakfast_choice', 'lunch_choice', 'dinner_choice', 'desert_choice', 'persons_choice', 'allergens']
