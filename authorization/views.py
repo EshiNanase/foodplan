@@ -200,6 +200,11 @@ def order_view(request):
             form = OrderForm(request.POST)
             return render(request, 'order.html', {'form': form, 'tariff': tariff, 'allergies': list(Allergen.objects.all())})
 
+        tariff, created = Tariff.objects.update_or_create(
+            user=user,
+            defaults=defaults
+        )
+
         if 'order' in request.POST:
             return create_checkout_session(user, tariff.price, int(request.POST.get('time')))
 
