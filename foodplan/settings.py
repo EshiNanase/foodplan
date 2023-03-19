@@ -32,6 +32,8 @@ DEBUG = env.bool('DEBUG', False)
 
 if not DEBUG:
     ALLOWED_HOSTS = ['45.131.40.159']
+else:
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
