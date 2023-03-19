@@ -16,7 +16,10 @@ def tariff_not_required(function=None, session_key='user'):
 def tariff_required(function=None, session_key='user'):
     @wraps(function)
     def wrapper(request, *args, **kwargs):
-        user = request.user
+        try:
+            user = request.user
+        except AttributeError:
+            return function(request, *args, **kwargs)
         if user.tariff_ends_at <= datetime.today().date():
             return redirect('order')
         return function(request, *args, **kwargs)
