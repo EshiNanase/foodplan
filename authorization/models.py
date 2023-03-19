@@ -131,8 +131,7 @@ class Tariff(models.Model):
         verbose_name='Количество персон'
     )
     price = models.PositiveIntegerField(
-        null=True,
-        blank=True,
+        default=0,
         verbose_name='Стоимость'
     )
     promo_code = models.ForeignKey(
