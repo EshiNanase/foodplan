@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}План питания на неделю, меню, рецепты, список покупок{% endblock %}
+{% block content %}
+    <main style="margin-top: calc(2rem + 75px);">
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
+                        <div class="card foodplan__card_borderless">
+                            <img src="../static/img/circle1.png" alt="">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex flex-column justify-content-between">
+                        <h2>{{recipe_details.name}}</h2>
+                        <ul class="list-group list-group-flush">
+                            {% for item in recipe_details.ingredients %}
+                                <li class="list-group-item">
+                                    {{item.ingredient}} ({{item.quantity}} {{item.unit}})
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <h6>Общая калорийность: {{recipe_details.calories}} Ккал</h6>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}

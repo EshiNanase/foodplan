@@ -76,37 +76,47 @@ class OrderForm(forms.ModelForm):
     )
 
     time = forms.ChoiceField(
-        choices=choices_time
+        choices=choices_time,
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
     breakfast_choice = forms.ChoiceField(
         label='Завтраки',
-        choices=choices_true_false
+        choices=choices_true_false,
+        initial=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
     lunch_choice = forms.ChoiceField(
         label='Обеды',
-        choices=choices_true_false
+        choices=choices_true_false,
+        initial=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
     dinner_choice = forms.ChoiceField(
         label='Ужины',
-        choices=choices_true_false
+        choices=choices_true_false,
+        initial=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
     desert_choice = forms.ChoiceField(
         label='Десерты',
-        choices=choices_true_false
+        choices=choices_true_false,
+        initial=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
     persons_choice = forms.ChoiceField(
         label='Кол-во персон',
-        choices=choices_persons
+        choices=choices_persons,
+        initial=1,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    promo_code = forms.CharField(
+        label='Промокод',
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control me-2'}),
+        initial=''
     )
 
     class Meta:
         model = Tariff
         fields = ['time', 'breakfast_choice', 'lunch_choice', 'dinner_choice', 'desert_choice', 'persons_choice', 'allergens']
-        widgets = {
-            'fish_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'meat_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'seed_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'bee_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'nut_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-            'lactose_allergy': forms.CheckboxInput(attrs={'class': 'form-check-input me-1 foodplan_checked-green'}),
-        }

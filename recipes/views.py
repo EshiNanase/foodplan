@@ -3,8 +3,10 @@ from .models import Recipe
 from authorization.models import Tariff
 from django.db.models import Case, When
 from django.db import models
+from authorization.decorators import tariff_required
 
 
+@tariff_required
 def get_recipe_details(recipe):
     recipe_items = recipe.ingredients.all()
 
@@ -13,7 +15,6 @@ def get_recipe_details(recipe):
         'quantity': item.quantity,
         'unit': item.get_unit_display()
     } for item in recipe_items]
-
 
     return {'recipe_details':{
         'name': recipe.name,
@@ -25,6 +26,7 @@ def get_recipe_details(recipe):
     }}
 
 
+@tariff_required
 def show_tariff_card(request):
     user = request.user
     tariff = Tariff.objects.get(user=user)

@@ -1,19 +1,21 @@
 import datetime
 import textwrap
 
+from django.db import transaction
 from django.views.generic import TemplateView
 from authorization.forms import ProfileUserForm, OrderForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from authorization.models import CustomUser, Tariff
+from authorization.models import CustomUser, Tariff, PromoCode, Allergen
 from authorization.decorators import tariff_not_required
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from authorization.utils import check_true_false
 from authorization.forms import RegisterUserForm, LoginUserForm
 from recipes.models import Recipe
+from authorization.payment import create_checkout_session
 
 
 class IndexView(TemplateView):
@@ -140,44 +142,84 @@ def logout_view(request):
     return redirect('home_page')
 
 
+@transaction.atomic
 @login_required
 @tariff_not_required
 def order_view(request):
 
     form = OrderForm()
 
+    user = request.user
+    tariff, created = Tariff.objects.get_or_create(
+        user=user
+    )
+
     if request.method == 'POST':
-
-        user = request.user
-
-        if not request.POST.get('name'):
-            messages.error(request, 'Не забудьте выбрать меню!')
-            return render(request, 'order.html', {'form': form})
-
-        allergens = []
-        for field_name in ['fish_allergy', 'meat_allergy', 'seed_allergy', 'bee_allergy', 'nut_allergy',
-                           'lactose_allergy']:
-            if request.POST.get(field_name):
-                allergen, created = Allergen.objects.get_or_create(name=field_name)
-                allergens.append(allergen)
 
         defaults = {
             'name': request.POST.get('name'),
-            'breakfast': check_true_false(request.POST.get('breakfast')),
-            'lunch': check_true_false(request.POST.get('lunch')),
-            'dinner': check_true_false(request.POST.get('dinner')),
-            'desert': check_true_false(request.POST.get('desert')),
-            'persons': int(request.POST.get('persons')),
-            'allergens': allergens,
+            'breakfast': check_true_false(request.POST.get('breakfast_choice')),
+            'lunch': check_true_false(request.POST.get('lunch_choice')),
+            'dinner': check_true_false(request.POST.get('dinner_choice')),
+            'desert': check_true_false(request.POST.get('desert_choice')),
+            'persons': int(request.POST.get('persons_choice')),
+            'fish_allergy': check_true_false(request.POST.get('fish_allergy')),
+            'meat_allergy': check_true_false(request.POST.get('meat_allergy')),
+            'seed_allergy': check_true_false(request.POST.get('seed_allergy')),
+            'bee_allergy': check_true_false(request.POST.get('bee_allergy')),
+            'nut_allergy': check_true_false(request.POST.get('nut_allergy')),
+            'lactose_allergy': check_true_false(request.POST.get('lactose_allergy')),
         }
 
-        tariff, _ = Tariff.objects.update_or_create(
-            user=user,
-            defaults=defaults
-        )
+        for pair in defaults:
+            if 'allergy' in pair and defaults[pair] is True:
+                tariff.allergens.add(Allergen.objects.get(name=pair))
+            elif 'allergy' in pair and defaults[pair] is False:
+                tariff.allergens.remove(Allergen.objects.get(name=pair))
+        for allergy in Allergen.objects.all():
+            defaults.pop(allergy.name)
 
-        user.tariff_ends_at = datetime.today() + relativedelta(months=int(request.POST.get('time')))
-        user.save()
-        return redirect('profile')
+        price = 0
+        if defaults['breakfast']:
+            price += 100
+        if defaults['lunch']:
+            price += 100
+        if defaults['dinner']:
+            price += 100
+        if defaults['desert']:
+            price += 100
+        price = price * int(request.POST.get('time'))
+        if tariff.promo_code:
+            price = price - tariff.promo_code.discount
+        defaults['price'] = price
+        tariff.price = price
+        tariff.save()
 
-    return render(request, 'order.html', {'form': form})
+        if not request.POST.get('name'):
+            messages.error(request, 'Не забудьте выбрать меню!')
+            form = OrderForm(request.POST)
+            return render(request, 'order.html', {'form': form, 'tariff': tariff, 'allergies': list(Allergen.objects.all())})
+
+        if 'order' in request.POST:
+            return create_checkout_session(user, tariff.price, int(request.POST.get('time')))
+
+        else:
+            form = OrderForm(request.POST)
+
+            if 'promo_code_submit' in request.POST:
+                promo_code = PromoCode.objects.filter(promo_code=request.POST.get('promo_code')).first()
+                if tariff.promo_code:
+                    messages.success(request, 'У вас уже есть примененный промокод!')
+                elif promo_code and promo_code.lasts_till >= datetime.today().date():
+                    tariff.price -= promo_code.discount
+                    tariff.promo_code = promo_code
+                    tariff.save()
+
+                    promo_code.used = True
+                    promo_code.save()
+                else:
+                    messages.success(request, 'Недействительный промокод')
+
+            return render(request, 'order.html', {'form': form, 'tariff': tariff, 'allergies': list(Allergen.objects.all())})
+
+    return render(request, 'order.html', {'form': form, 'tariff': tariff, 'allergies': list(Allergen.objects.all())})
