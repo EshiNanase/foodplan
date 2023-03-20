@@ -57,3 +57,69 @@ def show_tariff_card(request):
             meal_times.add(recipe.meal_time)
             unique_recipes.append(get_recipe_details(recipe))
     return render(request, 'card.html', context={'recipes': unique_recipes})
+
+
+def show_recipe1_card(request):
+    recipe = Recipe.objects.all()[0]
+
+    recipe_items = recipe.ingredients.all()
+
+    ingredients = [{
+        'ingredient': item.ingredient,
+        'quantity': item.quantity,
+        'unit': item.get_unit_display()
+    } for item in recipe_items]
+
+    conext = {'recipe': {
+        'name': recipe.name,
+        'ingredients': ingredients,
+        'calories': recipe.calories,
+        'description': recipe.short_description,
+        'instruction': recipe.instruction,
+        'meal_time': recipe.get_meal_time_display()
+    }}
+    return render(request, 'card2.html', context=conext)
+
+
+def show_recipe2_card(request):
+    recipe = Recipe.objects.all()[1]
+
+    recipe_items = recipe.ingredients.all()
+
+    ingredients = [{
+        'ingredient': item.ingredient,
+        'quantity': item.quantity,
+        'unit': item.get_unit_display()
+    } for item in recipe_items]
+
+    conext = {'recipe': {
+        'name': recipe.name,
+        'ingredients': ingredients,
+        'calories': recipe.calories,
+        'description': recipe.short_description,
+        'instruction': recipe.instruction,
+        'meal_time': recipe.get_meal_time_display()
+    }}
+    return render(request, 'card2.html', context=conext)
+
+
+def show_recipe3_card(request):
+    recipe = Recipe.objects.all()[2]
+
+    recipe_items = recipe.ingredients.all()
+
+    ingredients = [{
+        'ingredient': item.ingredient,
+        'quantity': item.quantity,
+        'unit': item.get_unit_display()
+    } for item in recipe_items]
+
+    conext = {'recipe': {
+        'name': recipe.name,
+        'ingredients': ingredients,
+        'calories': recipe.calories,
+        'description': recipe.short_description,
+        'instruction': recipe.instruction,
+        'meal_time': recipe.get_meal_time_display()
+    }}
+    return render(request, 'card2.html', context=conext)
