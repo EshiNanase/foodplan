@@ -234,6 +234,11 @@ body {
     position: relative;
 }
 
+.foodplan__hover_link:hover{
+    text-decoration:none;
+    text-shadow: 1px 1px 1px #555;
+}
+
 @media (min-width: 768px) {
     .nav-item__border:hover:before {
         content: "";

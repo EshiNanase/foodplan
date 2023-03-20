@@ -36,7 +36,7 @@
                                     {% if user.tariff_is_active %}
                                         <button id="tab2" class="btn shadow-none foodplan__tab-button" data-bs-toggle="tab" data-bs-target="#menu">Моё меню</button>
                                     {% else %}
-                                        <a class="btn shadow-none foodplan__tab-button" href="{% url 'order' %}" >Моё меню</a>
+                                        <a class="btn shadow-none foodplan__tab-button foodplan__hover_link" href="{% url 'order' %}" >Моё меню</a>
                                     {% endif %}
                                 </li>
                                 <li class="nav-item foodplan__tab-item flex-grow-1"></li>
