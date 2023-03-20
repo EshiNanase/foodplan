@@ -23,7 +23,9 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['recipes'] = Recipe.objects.all()
+        recipes = Recipe.objects.all()
+        for num, recipe in enumerate(recipes, start=1):
+            context[f'recipe{num}'] = recipe
         return context
 
 
