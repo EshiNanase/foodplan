@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from authorization.views import IndexView, login_view, register_view, profile_view, logout_view, order_view
-from recipes.views import show_tariff_card
+from recipes.views import show_tariff_card, show_recipe1_card, show_recipe2_card,show_recipe3_card
 from django.conf import settings
 from django.conf.urls.static import static
 from authorization.payment import stripe_webhook_view
@@ -30,7 +30,10 @@ urlpatterns = [
     path('profile', profile_view, name='profile'),
     path('order', order_view, name='order'),
     path('tariff_card', show_tariff_card, name='tariff_card'),
-    path('webhook', stripe_webhook_view, name='stripe_webhook')
+    path('webhook', stripe_webhook_view, name='stripe_webhook'),
+    path('recipe1', show_recipe1_card, name='recipe1'),
+    path('recipe2', show_recipe2_card, name='recipe2'),
+    path('recipe3', show_recipe3_card, name='recipe3'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
