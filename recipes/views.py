@@ -59,8 +59,10 @@ def show_tariff_card(request):
     return render(request, 'card.html', context={'recipes': unique_recipes})
 
 
-def show_recipe1_card(request):
-    recipe = Recipe.objects.all()[0]
+def show_recipe_card(request, recipe_id):
+    recipe = Recipe.objects.get(
+        id=recipe_id
+    )
 
     recipe_items = recipe.ingredients.all()
 
@@ -81,8 +83,10 @@ def show_recipe1_card(request):
     return render(request, 'card2.html', context=conext)
 
 
-def show_recipe2_card(request):
-    recipe = Recipe.objects.all()[1]
+def show_recipe2_card(request, recipe_id):
+    recipe = Recipe.objects.get(
+        id=recipe_id
+    )
 
     recipe_items = recipe.ingredients.all()
 

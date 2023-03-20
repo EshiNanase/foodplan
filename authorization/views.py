@@ -24,7 +24,7 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         recipes = Recipe.objects.all()
-        context[f'ad_recipes'] = recipes[:2]
+        context['ad_recipes'] = recipes[:2]
         return context
 
 

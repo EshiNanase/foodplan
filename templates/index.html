@@ -64,7 +64,7 @@
                         <div class="carousel-inner">
                             {% for recipe in ad_recipes %}
                             <div class="carousel-item active">
-                                <a href="{% url 'recipe' %}">
+                                <a href="{% url 'recipe' recipe_id=recipe.id %}">
                                     <img src="{{ recipe.image.url }}" class="d-block w-100" alt="...">
                                     <div class="card-img-overlay text-white text-center carousel-item__gradient">
                                         <h5><b>{{ recipe.short_description }}</b></h5>
