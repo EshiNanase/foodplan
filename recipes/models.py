@@ -54,6 +54,10 @@ class Recipe(models.Model):
         related_name='recipes',
         blank=True
     )
+    ad = models.BooleanField(
+        default=False,
+        verbose_name='Рекламный рецепт'
+    )
 
     class Meta:
         verbose_name = 'Рецепт'

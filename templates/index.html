@@ -62,9 +62,18 @@
                 <div class="container w-md-75">
                     <div id="carousel1" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
-                            {% for recipe in ad_recipes %}
                             <div class="carousel-item active">
-                                <a href="{% url 'recipe' recipe_id=recipe.id %}">
+                                <a href="{% url 'ad_recipe' recipe_id=active_recipe.id %}">
+                                    <img src="{{ active_recipe.image.url }}" class="d-block w-100" alt="...">
+                                    <div class="card-img-overlay text-white text-center carousel-item__gradient">
+                                        <h5><b>{{ active_recipe.short_description }}</b></h5>
+                                        <h2><b>{{ active_recipe.name }}</b></h2>
+                                    </div>
+                                </a>
+                            </div>
+                            {% for recipe in ad_recipes %}
+                            <div class="carousel-item">
+                                <a href="{% url 'ad_recipe' recipe_id=recipe.id %}">
                                     <img src="{{ recipe.image.url }}" class="d-block w-100" alt="...">
                                     <div class="card-img-overlay text-white text-center carousel-item__gradient">
                                         <h5><b>{{ recipe.short_description }}</b></h5>

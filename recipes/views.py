@@ -59,11 +59,8 @@ def show_tariff_card(request):
     return render(request, 'card.html', context={'recipes': unique_recipes})
 
 
-def show_recipe_card(request, recipe_id):
-    recipe = Recipe.objects.get(
-        id=recipe_id
-    )
-
+def show_ad_recipe_card(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id, ad=True)
     recipe_items = recipe.ingredients.all()
 
     ingredients = [{
